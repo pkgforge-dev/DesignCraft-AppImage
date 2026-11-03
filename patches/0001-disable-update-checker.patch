@@ -1,0 +1,35 @@
+diff --git a/crates/ui-egui/src/updates_ui.rs b/crates/ui-egui/src/updates_ui.rs
+index 24a0562..1437b7f 100644
+--- a/crates/ui-egui/src/updates_ui.rs
++++ b/crates/ui-egui/src/updates_ui.rs
+@@ -47,25 +47,14 @@ impl Default for Runtime {
+ impl DesignApp {
+     /// Whether the app asks for a newer release when it starts (off until the desktop app turns it on).
+     #[cfg(not(target_arch = "wasm32"))]
+-    pub fn set_startup_update_check(&mut self, on: bool) {
+-        self.updates_rt.startup_check = on;
++    pub fn set_startup_update_check(&mut self, _on: bool) {
++        // The AppImage is updated by its own package manager; no check is ever asked for.
+     }
+ }
+ 
+-pub(crate) fn check(app: &mut DesignApp) -> Result<Value, String> {
+-    #[cfg(not(target_arch = "wasm32"))]
+-    {
+-        app.updates_rt.check_requested = true;
+-        if let Some(ctx) = &app.updates_rt.repaint {
+-            ctx.request_repaint();
+-        }
+-        Ok(Value::Null)
+-    }
+-    #[cfg(target_arch = "wasm32")]
+-    {
+-        app.updates_rt.manual_window_open = true;
+-        Ok(Value::Null)
+-    }
++pub(crate) fn check(_app: &mut DesignApp) -> Result<Value, String> {
++    // Help > Check for Updates would offer to replace this build with an upstream release.
++    Ok(Value::Null)
+ }
+ 
+ pub(crate) fn tick(app: &mut DesignApp, ctx: &egui::Context) {
